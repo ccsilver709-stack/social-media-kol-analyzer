@@ -13,6 +13,7 @@
 - **自动互动率计算**：观看互动率 + 粉丝互动率（粉丝量带 k/w 单位自动换算）
 - **批量飞书回填**：支持读取飞书表格链接列，批量抓取并回填到指定列
 - **Instagram URL 自动修复**：`/reels/` 复数 URL 自动转 `/reel/` 单数
+- **结构化内容概要**：自动提取 7 个维度（产品/型号、核心卖点、促销信息、使用场景、个人背景、互动点），支持中/英/德/法多语言关键词识别，纯事实提取不推断
 
 ## 安装
 
@@ -84,6 +85,7 @@ social-media-kol-analyzer/
 ├── scripts/
 │   ├── fetch_kol_data.py             # 主入口：自动平台识别 + 多通道调度 + 统一输出
 │   ├── fetch_oembed.py               # 独立模块：TikTok/Instagram oEmbed 抓取
+│   ├── content_summarizer.py         # 结构化内容概要生成器（7维度，中/英/德/法多语言）
 │   └── batch_fetch_and_write.py      # 批量抓取 + 飞书表格回填
 └── references/
     └── platform-endpoints.md         # 各平台 API 端点、字段映射、互动率口径详解

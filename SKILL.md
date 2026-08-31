@@ -73,6 +73,10 @@ python scripts/fetch_kol_data.py "<URL>" --json
     "view_engagement_rate": 0.0123,
     "fan_engagement_rate": 0.0456
   },
+  "summary": {
+    "detailed": "结构化详细概要：核心句 | 【产品】... | 【卖点】... | 【促销】... | 【场景】... | 【背景】... | 【互动】...",
+    "brief": "简化版概要：核心句；产品：...；价格：..."
+  },
   "error": null
 }
 ```
@@ -80,6 +84,11 @@ python scripts/fetch_kol_data.py "<URL>" --json
 互动率计算口径：
 - **观看互动率** = (点赞数 + 评论数) / 观看量（仅 YouTube 有观看量时计算）
 - **粉丝互动率** = (点赞数 + 评论数) / 粉丝量（所有平台通用，粉丝量带 k/w 单位时自动换算）
+
+内容概要生成（`scripts/content_summarizer.py`）：
+- **详细版**（`summary.detailed`）：自动提取 7 个维度——核心句、产品/型号、核心卖点、促销信息、使用场景、个人背景、互动点，支持中/英/德/法多语言关键词识别，纯事实提取不推断
+- **简化版**（`summary.brief`）：仅核心句 + 产品 + 价格，适合空间有限场景
+- 提取维度示例：产品（LUBA 3 AWD/SPINO E1）、卖点（LiDAR/AI避障/AWD/无边界线）、促销（折扣/价格/周年庆）、场景（度假/花园/泳池）、背景（设备损坏/保险理赔/移居）、互动（提问/投票/命名挑战）
 
 ### Step 2：批量抓取 + 飞书表格回填
 
@@ -161,9 +170,9 @@ python scripts/batch_fetch_and_write.py \
 
 | 脚本 | 用途 |
 |---|---|
-| `scripts/fetch_kol_data.py` | 单链接多平台统一抓取主入口 |
-| `scripts/fetch_youtube.py` | YouTube yt-dlp 抓取模块（独立可用） |
+| `scripts/fetch_kol_data.py` | 单链接多平台统一抓取主入口（含 YouTube yt-dlp、oEmbed、互动率、内容概要） |
 | `scripts/fetch_oembed.py` | TikTok/Instagram oEmbed API 抓取模块（独立可用） |
+| `scripts/content_summarizer.py` | 结构化内容概要生成器（7维度提取，中/英/德/法多语言） |
 | `scripts/batch_fetch_and_write.py` | 批量抓取 + 飞书表格回填 |
 
 ## 参考文档

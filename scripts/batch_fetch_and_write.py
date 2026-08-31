@@ -25,6 +25,9 @@ import time
 import re
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, SCRIPT_DIR)
+
+from content_summarizer import generate_detailed_summary, summarize_content_simple
 
 
 def run_lark_cli(args_list, timeout=60):
@@ -122,19 +125,28 @@ def parse_fans_value(value_str):
         return None
 
 
-def summarize_content(result):
-    """基于抓取结果生成内容概要（纯事实，不推断）"""
+def summarize_content(result, detailed=True):
+    """
+    基于抓取结果生成结构化内容概要（纯事实，不推断）
+    
+    Args:
+        result: 抓取结果字典
+        detailed: True=详细版（多维度结构化），False=简化版（核心句+产品+价格）
+    
+    Returns:
+        内容概要字符串
+    """
     video = result.get("video", {})
-    title = video.get("title", "") or video.get("description", "")
+    title = video.get("title", "") or ""
+    description = video.get("description", "") or ""
 
-    if not title:
+    if not title and not description:
         return ""
 
-    # 取前150字符作为概要基础
-    summary = title[:150].strip()
-    if len(title) > 150:
-        summary += "..."
-    return summary
+    if detailed:
+        return generate_detailed_summary(title, description, max_length=500)
+    else:
+        return summarize_content_simple(title, description, max_length=200)
 
 
 def classify_blogger(result):

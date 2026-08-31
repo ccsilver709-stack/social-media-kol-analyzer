@@ -18,6 +18,9 @@ import os
 from urllib.parse import urlparse
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, SCRIPT_DIR)
+
+from content_summarizer import generate_detailed_summary, summarize_content_simple
 
 
 def detect_platform(url):
@@ -260,6 +263,19 @@ def fetch_kol_data(url, max_comments=0, verbose=False):
     if result and result.get("video"):
         result = calculate_engagement(result)
 
+    # 生成结构化内容概要
+    if result and result.get("video"):
+        video = result["video"]
+        title = video.get("title", "") or ""
+        description = video.get("description", "") or ""
+        if title or description:
+            result["summary"] = {
+                "detailed": generate_detailed_summary(title, description, max_length=500),
+                "brief": summarize_content_simple(title, description, max_length=200),
+            }
+        else:
+            result["summary"] = {"detailed": "", "brief": ""}
+
     return result
 
 
@@ -293,6 +309,9 @@ def main():
             print(f"观看互动率: {eng['view_engagement_rate']*100:.2f}%")
         if eng.get("fan_engagement_rate"):
             print(f"粉丝互动率: {eng['fan_engagement_rate']*100:.2f}%")
+        summary = result.get("summary", {})
+        if summary.get("detailed"):
+            print(f"内容概要: {summary['detailed']}")
 
 
 if __name__ == "__main__":
